@@ -45,11 +45,12 @@ class Poller:
         }
         self.proxies = proxies
         self.on_in_stock = on_in_stock
+        self.last_check = 0
+        self.check_interval = 1  # seconds
 
         self.pygame = pygame
         self.pygame.mixer.init()
         self.pygame.mixer.music.load("assets/ping.mp3")
-
 
     def poll(self):
         log.info(f"🔍 Started polling for {self.product_name}")
@@ -58,6 +59,11 @@ class Poller:
             pass
         while True:
             try:
+                if time.time() - self.last_check < self.check_interval:
+                    time.sleep(0.1)
+                    continue
+
+                self.last_check = time.time()
                 response = requests.get(
                     self.poll_url,
                     headers=self.headers,
@@ -82,6 +88,8 @@ class Poller:
                     log.info(f"❌ Still out of stock: {self.product_name}\n")
             except requests.RequestException as e:
                 log.info(f"⚠️ Request failed: {e}")
+            except Exception as e:
+                log.error(f"Unexpected error polling {self.product_name}: {str(e)}")
 
             delay = random.uniform(*self.interval_range)
             time.sleep(delay)
@@ -90,12 +98,12 @@ class Poller:
     @property
     def is_done(self):
         return self.done
-    
+
     @property
     # This property determines whether selenium should handle the item
     def should_handle(self):
         return self.handle
-    
+
     def start_poll(self):
         thread = threading.Thread(target=self.poll)
         thread.daemon = True

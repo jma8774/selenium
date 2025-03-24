@@ -60,7 +60,7 @@ def handle_target(url):
         return
     in_progress = True
     cc_number = os.getenv("CC_NUMBER")
-    expiration_date = os.getenv("EXPIRATION_DATE") 
+    expiration_date = os.getenv("EXPIRATION_DATE")
     cvv = os.getenv("CVV")
     user_data_dir = os.getenv("USER_DATA_DIR")
 
@@ -68,15 +68,15 @@ def handle_target(url):
         log.info("Initializing Chrome driver...")
         chrome_options = Options()
         chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
-        
+
         log.info("Creating Chrome driver...")
         driver = webdriver.Chrome(options=chrome_options)
         log.info("Chrome driver created successfully")
-        
+
         log.info(f"Navigating to URL: {url}")
         driver.get(url)
         wait = WebDriverWait(driver, 10)
-        
+
         log.info("Starting automation steps...")
         # Click shipping option
         click_element((By.XPATH, "//span[text()='Shipping']"))
@@ -98,7 +98,7 @@ def handle_target(url):
 
         # Confirm
         click_element((By.XPATH, "//button[text()='Confirm']"))
-        
+
     except Exception as e:
         log.info(f"An error occurred: {str(e)}")
     finally:

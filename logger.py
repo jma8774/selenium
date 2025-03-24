@@ -11,7 +11,7 @@ os.makedirs("logs", exist_ok=True)
 
 class ColoredFormatter(logging.Formatter):
     """Custom formatter with colors"""
-    
+
     COLORS = {
         'DEBUG': Fore.BLUE,
         'INFO': Fore.GREEN,
