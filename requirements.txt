@@ -1,0 +1,8 @@
+fake-useragent
+pygame
+selenium
+discord.py
+python-dotenv
+colorama
+asyncio
+tinydb
