@@ -54,7 +54,7 @@ class Poller:
     def poll(self):
         log.info(f"🔍 Started polling for {self.product_name}")
         if not args.dev:
-            # sendBotChannel(f"🔍 Started polling for {self.product_name}: {self.product_url}")
+            sendBotChannel(f"🔍 Started polling for {self.product_name}: {self.product_url}")
             pass
         while True:
             try:

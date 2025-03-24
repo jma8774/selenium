@@ -25,8 +25,8 @@ class Main:
         time.sleep(3)
 
         # Main
-        # self.target.start_poll_for_stock()
-        self.target.start_poll_for_new_product()
+        self.target.start_poll_for_stock()
+        self.target.start_poll_for_new_product(15 * 60)
         try:
             while self.running:
                 time.sleep(1)
