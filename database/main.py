@@ -65,12 +65,18 @@ class PokemonCenterDB(Database):
     def __init__(self, db_path="data/pk_center.json"):
         super().__init__(db_path)
 
+class GameStopDB(Database):
+    def __init__(self, db_path="data/gamestop.json"):
+        super().__init__(db_path)
+
 # Create a global instance
 common_db = None
 target_db = None
 pk_center_db = None
+gamestop_db = None
 def Init():
-    global common_db, target_db, pk_center_db
+    global common_db, target_db, pk_center_db, gamestop_db
     common_db = CommonDB(db_path="data/common.json")
     target_db = TargetDB(db_path="data/target.json")
     pk_center_db = PokemonCenterDB(db_path="data/pk_center.json")
+    gamestop_db = GameStopDB(db_path="data/gamestop.json")

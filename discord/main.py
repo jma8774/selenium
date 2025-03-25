@@ -43,7 +43,8 @@ class MyBot(discord.Client):
     }
     roles = {
       "chodes": 437677551926771732,
-      "king": 363803943903428609
+      "king": 363803943903428609,
+      "tera nibbas": 448189194502668291
     }
 
 

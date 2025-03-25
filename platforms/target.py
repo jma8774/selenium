@@ -96,6 +96,11 @@ class Target:
         return f"https://redsky.target.com/redsky_aggregations/v1/web/plp_search_v2?{urlencode(params)}"
 
       def poll():
+        last_poll_time = self.target_db.get("last_poll_time")
+        if last_poll_time and time.time() - last_poll_time < interval:
+          log.info(f"Last poll was less than {interval} seconds ago. Skipping...")
+          time.sleep(interval)
+          return
         ua = UserAgent()
         while True:
           db_tcins = set(self.target_db.get("tcins") or [])
@@ -136,6 +141,7 @@ class Target:
           except Exception as e:
               log.error(f"Error polling Target: {str(e)}")
           self.target_db.set("tcins", db_tcins)
+          self.target_db.set("last_poll_time", time.time())
           log.info(f"🔄 Done polling Target for new products, sleeping for {interval} seconds")
           time.sleep(interval)
 

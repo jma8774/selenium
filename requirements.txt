@@ -6,3 +6,5 @@ python-dotenv
 colorama
 asyncio
 tinydb
+undetected-chromedriver
+setuptools
