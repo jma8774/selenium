@@ -105,7 +105,7 @@ class EvoDB(Database):
         return data
 
 
-# Create a global instance
+# Create a global instance, we can probably do better here but it's fine for now
 common_db = None
 target_db = None
 pk_center_db = None
@@ -114,7 +114,7 @@ evo_db = None
 
 
 def Init():
-    global common_db, target_db, pk_center_db, gamestop_db, evo_db
+    global common_db, target_db, pk_center_db, gamestop_db, evo_db, amd_db
     common_db = CommonDB(db_path="data/common.json")
     target_db = TargetDB(db_path="data/target.json")
     pk_center_db = PokemonCenterDB(db_path="data/pk_center.json")

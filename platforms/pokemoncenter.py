@@ -2,7 +2,7 @@ import random
 import threading
 import time
 
-from seleniumbase import Driver
+from seleniumbase import SB
 
 from discordbot.main import sendBotChannel
 from logger import log
@@ -23,123 +23,126 @@ class PokemonCenter:
         self.db = db
 
     def start_poll_for_queue(self):
-        try:
-            # Initialize SeleniumBase driver with undetected-chromedriver mode
-            self.driver = Driver(uc=True, headless=False)
-            log.info("Successfully connected to Chrome instance")
-        except Exception as e:
-            log.error(f"Failed to connect to Chrome: {str(e)}")
-            log.info("Make sure Chrome is installed and available in PATH")
-            return
-
         def poll():
-            log.info("Navigating to Pokemon Center...")
-            self.driver.get("https://www.pokemoncenter.com")
-
-            while True:
-                seconds = 5 * 60
-                last_detected_queue_time = self.db.get("last_detected_queue_time")
-                if (
-                    last_detected_queue_time
-                    and time.time() - last_detected_queue_time < seconds
-                ):
-                    log.info(
-                        f"Last queue time was less than {seconds} seconds ago. Skipping..."
-                    )
-                    time.sleep(60)
-                    continue
-
+            with SB(uc=True, headless=False) as sb:
                 try:
-                    found_queue = False
+                    log.info("Successfully connected to Chrome instance")
+                    log.info("Navigating to Pokemon Center...")
+                    sb.get("https://www.pokemoncenter.com")
 
-                    # FIX THIS: Ensure page is fully loaded before checking for queue
-                    time.sleep(10)
-
-                    # Define selectors that indicate presence of a queue
-                    queue_selectors = [
-                        "h1.waiting-text",
-                        "//*[contains(text(), 'You are currently in line')]",
-                        "//*[contains(text(), 'queue-it')]",
-                    ]
-
-                    # First check the main page for queue indicators
-                    for selector in queue_selectors:
-                        try:
-                            # Handle both CSS and XPath selectors
-                            if selector.startswith("//"):
-                                exists = self.driver.is_element_visible(
-                                    selector, by="xpath", timeout=3
-                                )
-                            else:
-                                exists = self.driver.is_element_visible(
-                                    selector, timeout=3
-                                )
-
-                            if exists:
-                                log.info("[🔔] Queue detected! Drop likely happening.")
-                                log.info(
-                                    f"Found queue element with selector: {selector}"
-                                )
-                                sendBotChannel(
-                                    f"🔔 Queue detected! Drop likely happening at https://www.pokemoncenter.com",
-                                    user="jeemong",
-                                )
-                                self.db.set("last_detected_queue_time", time.time())
-                                found_queue = True
-                                break
-                        except:
+                    while True:
+                        seconds = 5 * 60
+                        last_detected_queue_time = self.db.get(
+                            "last_detected_queue_time"
+                        )
+                        if (
+                            last_detected_queue_time
+                            and time.time() - last_detected_queue_time < seconds
+                        ):
+                            log.info(
+                                f"Last queue time was less than {seconds} seconds ago. Skipping..."
+                            )
+                            time.sleep(60)
                             continue
 
-                    # Check iframes for queue
-                    if not found_queue:
-                        iframes = self.driver.find_elements("iframe")
-                        for iframe in iframes:
-                            try:
-                                self.driver.switch_to.frame(iframe)
-                                for selector in queue_selectors:
-                                    try:
-                                        if selector.startswith("//"):
-                                            exists = self.driver.is_element_visible(
-                                                selector, by="xpath", timeout=3
-                                            )
-                                        else:
-                                            exists = self.driver.is_element_visible(
-                                                selector, timeout=3
-                                            )
+                        try:
+                            found_queue = False
 
-                                        if exists:
-                                            log.info(
-                                                "[🔔] Queue detected! Drop likely happening."
-                                            )
-                                            log.info(
-                                                f"Found queue element with selector: {selector} in iframe"
-                                            )
-                                            sendBotChannel(
-                                                f"🔔 Queue detected! Drop likely happening at https://www.pokemoncenter.com",
-                                                user="jeemong",
-                                            )
-                                            self.db.set(
-                                                "last_detected_queue_time", time.time()
-                                            )
-                                            found_queue = True
+                            # Ensure page is fully loaded before checking for queue
+                            sb.sleep(10)
+
+                            # Define selectors that indicate presence of a queue
+                            queue_selectors = [
+                                "h1.waiting-text",
+                                "//*[contains(text(), 'You are currently in line')]",
+                                "//*[contains(text(), 'queue-it')]",
+                            ]
+
+                            # First check the main page for queue indicators
+                            for selector in queue_selectors:
+                                try:
+                                    # Handle both CSS and XPath selectors
+                                    if selector.startswith("//"):
+                                        exists = sb.is_element_visible(
+                                            selector, by="xpath"
+                                        )
+                                    else:
+                                        exists = sb.is_element_visible(selector)
+
+                                    if exists:
+                                        log.info(
+                                            "[🔔] Queue detected! Drop likely happening."
+                                        )
+                                        log.info(
+                                            f"Found queue element with selector: {selector}"
+                                        )
+                                        sendBotChannel(
+                                            f"🔔 Queue detected! Drop likely happening at https://www.pokemoncenter.com",
+                                            user="jeemong",
+                                        )
+                                        self.db.set(
+                                            "last_detected_queue_time", time.time()
+                                        )
+                                        found_queue = True
+                                        break
+                                except:
+                                    continue
+
+                            # Check iframes for queue
+                            if not found_queue:
+                                iframes = sb.find_elements("iframe")
+                                for iframe in iframes:
+                                    try:
+                                        sb.switch_to_frame(iframe)
+                                        for selector in queue_selectors:
+                                            try:
+                                                if selector.startswith("//"):
+                                                    exists = sb.is_element_visible(
+                                                        selector, by="xpath"
+                                                    )
+                                                else:
+                                                    exists = sb.is_element_visible(
+                                                        selector
+                                                    )
+
+                                                if exists:
+                                                    log.info(
+                                                        "[🔔] Queue detected! Drop likely happening."
+                                                    )
+                                                    log.info(
+                                                        f"Found queue element with selector: {selector} in iframe"
+                                                    )
+                                                    sendBotChannel(
+                                                        f"🔔 Queue detected! Drop likely happening at https://www.pokemoncenter.com",
+                                                        user="jeemong",
+                                                    )
+                                                    self.db.set(
+                                                        "last_detected_queue_time",
+                                                        time.time(),
+                                                    )
+                                                    found_queue = True
+                                                    break
+                                            except:
+                                                continue
+                                        sb.switch_to_default_content()
+                                        if found_queue:
                                             break
                                     except:
+                                        sb.switch_to_default_content()
                                         continue
-                                self.driver.switch_to.default_content()
-                                if found_queue:
-                                    break
-                            except:
-                                self.driver.switch_to.default_content()
-                                continue
 
-                    if not found_queue:
-                        log.info("[✅] Site is normal. No queue.")
+                            if not found_queue:
+                                log.info("[✅] Site is normal. No queue.")
+
+                        except Exception as e:
+                            log.error(f"Error checking Pokemon Center: {str(e)}")
+                        finally:
+                            time.sleep(random.randint(10, 15))
+                            sb.refresh()
 
                 except Exception as e:
-                    log.error(f"Error checking Pokemon Center: {str(e)}")
-                finally:
-                    time.sleep(random.randint(10, 15))
-                    self.driver.refresh()
+                    log.error(f"Failed to connect to Chrome: {str(e)}")
+                    log.info("Make sure Chrome is installed and available in PATH")
 
         thread = threading.Thread(target=poll)
         thread.daemon = True

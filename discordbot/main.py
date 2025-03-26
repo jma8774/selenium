@@ -1,44 +1,59 @@
 import asyncio
 import os
+import threading
 
 import discord as discord
-from discord.utils import get
 from dotenv import load_dotenv
 
 from args import args
 from logger import log
 
-discord_client = None
-discord_loop = None
 guilds = {}
 channels = {}
 users = {}
 roles = {}
 
+discord_manager = None
 
-def run_discord_bot():
-    global discord_client, discord_loop
-    load_dotenv()
-    intents = discord.Intents.default()
-    intents.members = True
-    intents.message_content = True
-    discord_client = MyBot(intents=intents)
-    discord_loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(discord_loop)
-    discord_loop.run_until_complete(discord_client.start(os.getenv("DISCORD_TOKEN")))
+
+class DiscordManager:
+    def __init__(self):
+        global discord_manager
+        discord_manager = self
+
+        load_dotenv()
+
+        intents = discord.Intents.default()
+        intents.members = True
+        intents.message_content = True
+        self.discord_client = MyBot(intents=intents)
+
+        # Create discord event loop and run in separate thread
+        self.discord_loop = asyncio.new_event_loop()
+        self.discord_thread = threading.Thread(
+            target=self._run_discord_bot, daemon=True
+        )
+        self.discord_thread.start()
+        log.info("Discord manager initialized")
+
+    def _run_discord_bot(self):
+        asyncio.set_event_loop(self.discord_loop)
+        self.discord_loop.run_until_complete(
+            self.discord_client.start(os.getenv("DISCORD_TOKEN"))
+        )
 
 
 class MyBot(discord.Client):
     async def on_ready(self):
         global channels, users, roles
-        log.info(f"{discord_client.user} has connected to Discord!")
+        log.info(f"{self.user} has connected to Discord!")
         guilds = {
-            "apes": discord_client.get_guild(152954629993398272),
+            "apes": self.get_guild(152954629993398272),
         }
         channels = {
-            "lounge": discord_client.get_channel(420679175465336832),
-            "bot-spam": discord_client.get_channel(1018050116424306738),
-            "bot-spam-2": discord_client.get_channel(1148302801961758772),
+            "lounge": self.get_channel(420679175465336832),
+            "bot-spam": self.get_channel(1018050116424306738),
+            "bot-spam-2": self.get_channel(1148302801961758772),
         }
         users = {
             "ricky": 600922329815449632,
@@ -103,21 +118,25 @@ class MyBot(discord.Client):
 
 
 def sendBotChannel(message, user: str = None, role: str = None, delete_after=None):
-    global discord_client, discord_loop
-    if not discord_client or not discord_loop or args.dev:
+    global discord_manager
+    if not discord_manager or args.dev:
+        log.info(f"Not sending message to bot-spam-2: {message}")
         return
     asyncio.run_coroutine_threadsafe(
-        discord_client.send("bot-spam-2", message, user, role, delete_after),
-        discord_loop,
+        discord_manager.discord_client.send(
+            "bot-spam-2", message, user, role, delete_after
+        ),
+        discord_manager.discord_loop,
     )
 
 
 def send(channel, message, user: str = None, role: str = None, delete_after=None):
-    global discord_client, discord_loop
-    if not discord_client or not discord_loop or args.dev:
+    global discord_manager
+    if not discord_manager or args.dev:
         return
     asyncio.run_coroutine_threadsafe(
-        discord_client.send(channel, message, user, role, delete_after), discord_loop
+        discord_manager.discord_client.send(channel, message, user, role, delete_after),
+        discord_manager.discord_loop,
     )
 
 
@@ -131,12 +150,12 @@ def sendEmbed(
     role: str = None,
     delete_after=None,
 ):
-    global discord_client, discord_loop
-    if not discord_client or not discord_loop or args.dev:
+    global discord_manager
+    if not discord_manager or args.dev:
         return
     asyncio.run_coroutine_threadsafe(
-        discord_client.sendEmbed(
+        discord_manager.discord_client.sendEmbed(
             "bot-spam-2", message, name, price, url, picture, user, role, delete_after
         ),
-        discord_loop,
+        discord_manager.discord_loop,
     )
