@@ -14,7 +14,7 @@ from seleniumbase import SB
 
 from args import args
 from database.main import EvoDB
-from discordbot.main import sendBotChannel
+from discordbot.main import sendBotChannel, sendEmbed
 from helper import try_get_json_value
 from logger import log
 from poller import Poller
@@ -31,7 +31,6 @@ class Evo:
                 sb.open(
                     "https://www.evo.com/shop/snowboard/jackets/686/burton/mens/size_s/size_xs/rpp_200"
                 )
-
                 while True:
                     try:
                         if not sb.assert_text("Men's Snowboard Jackets", timeout=60):
@@ -57,6 +56,10 @@ class Evo:
                             product_url = product.find(
                                 "a", class_="product-thumb-link"
                             )["href"]
+                            product_img = product.find(
+                                "span",
+                                class_="product-thumb-image-wrapper js-product-thumb-link",
+                            ).find("img")["src"]
 
                             # Find the prices
                             prices = {"min": None, "max": None}
@@ -66,6 +69,7 @@ class Evo:
                                 and len(x.get("class", [])) == 1
                                 and x.get("class", [])[0] == "product-thumb-price"
                             )
+
                             for maybe_price_span in product_price_span.children:
                                 if "$" in (maybe_price_span.text or ""):
                                     price = maybe_price_span.find(
@@ -92,7 +96,6 @@ class Evo:
                                 new_product = self.db.insert_or_update_product(
                                     product_id, product_name, product_url, prices
                                 )
-
                             if new_product is not None:
                                 price_history_string = "\n".join(
                                     [
@@ -103,8 +106,15 @@ class Evo:
                                 log.info(
                                     f"✅ Updated product_id={product_id} prices={prices}"
                                 )
-                                sendBotChannel(
-                                    f"✅ Updated: https://www.evo.com{product_url}\n\n**Price History**\n{price_history_string}"
+                                # sendBotChannel(
+                                #     f"✅ Updated: https://www.evo.com{product_url}\n\n**Price History**\n{price_history_string}"
+                                # )
+                                sendEmbed(
+                                    "✅ Updated Price",
+                                    product_name,
+                                    price_history_string,
+                                    f"https://www.evo.com{product_url}",
+                                    product_img,
                                 )
 
                         delay = 60 * 60

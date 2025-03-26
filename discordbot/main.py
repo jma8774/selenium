@@ -67,6 +67,40 @@ class MyBot(discord.Client):
         else:
             await channels[channel].send(message, delete_after=delete_after)
 
+    async def sendEmbed(
+        self,
+        channel,
+        message,
+        name: str = None,
+        price: str = None,
+        url: str = None,
+        picture: str = None,
+        user: str = None,
+        role: str = None,
+        delete_after=None,
+    ):
+        global channels, users, roles
+        # log.info(f"Sending message to {channel}: {message}")
+        if user:
+            mention = f"<@{users[user]}> "  # Mention user
+        elif role:
+            mention = f"<@&{roles[role]}> "  # Mention role
+        else:
+            mention = ""  # No mention
+
+        # Create an embed object
+        embed = discord.Embed(
+            title=f"{message} - {price}",
+            description=f"[{name}]({url})",
+            color=discord.Color.blue(),
+        )
+        embed.set_image(url=picture)
+
+        # Send the message with mention (if any) and the embed
+        await channels[channel].send(
+            content=mention, embed=embed, delete_after=delete_after
+        )
+
 
 def sendBotChannel(message, user: str = None, role: str = None, delete_after=None):
     global discord_client, discord_loop
@@ -84,4 +118,25 @@ def send(channel, message, user: str = None, role: str = None, delete_after=None
         return
     asyncio.run_coroutine_threadsafe(
         discord_client.send(channel, message, user, role, delete_after), discord_loop
+    )
+
+
+def sendEmbed(
+    message,
+    name: str = None,
+    price: str = None,
+    url: str = None,
+    picture: str = None,
+    user: str = None,
+    role: str = None,
+    delete_after=None,
+):
+    global discord_client, discord_loop
+    if not discord_client or not discord_loop or args.dev:
+        return
+    asyncio.run_coroutine_threadsafe(
+        discord_client.sendEmbed(
+            "bot-spam-2", message, name, price, url, picture, user, role, delete_after
+        ),
+        discord_loop,
     )
