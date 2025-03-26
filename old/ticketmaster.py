@@ -1,26 +1,27 @@
-import requests
-import threading
-import sys
-import time
-from logger import log
-from discordbot.main import run_discord_bot, sendBotChannel
-import random
-from args import args
-from dotenv import load_dotenv
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait, Select
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
-import random
-import time
-from dotenv import load_dotenv
 import os
+import random
+import sys
+import threading
+import time
+
 import pygame
+import requests
+from dotenv import load_dotenv
+
+from args import args
+from discordbot.main import run_discord_bot, sendBotChannel
+from logger import log
+from selenium import webdriver
+from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select, WebDriverWait
+
 wait = None
 driver = None
+
 
 def click_join_queue_button(time_to_wait=60 * 60):
     global driver, wait
@@ -32,14 +33,15 @@ def click_join_queue_button(time_to_wait=60 * 60):
         try:
             current_time = time.time()
             elapsed_time = current_time - start_time
-            log.info(f"Attempting to find button... (Elapsed time: {elapsed_time:.1f}s)")
+            log.info(
+                f"Attempting to find button... (Elapsed time: {elapsed_time:.1f}s)"
+            )
 
             # Wait for the span with text "Join the Queue" to be present and clickable
             join_button = wait.until(
-                EC.presence_of_element_located((
-                    By.XPATH,
-                    "//span[text()='Join the Queue']"
-                ))
+                EC.presence_of_element_located(
+                    (By.XPATH, "//span[text()='Join the Queue']")
+                )
             )
 
             if not join_button.is_enabled():
@@ -70,6 +72,7 @@ def click_join_queue_button(time_to_wait=60 * 60):
 
         time.sleep(0.1)
 
+
 def handle_ticketmaster(url):
     global wait, driver
     user_data_dir = os.getenv("USER_DATA_DIR")
@@ -96,6 +99,7 @@ def handle_ticketmaster(url):
     except Exception as e:
         log.info(f"An error occurred: {str(e)}")
 
+
 def main():
     pygame.mixer.init()
     pygame.mixer.music.load("assets/ping.mp3")
@@ -106,6 +110,7 @@ def main():
 
     # Handle the target URL
     handle_ticketmaster(url)
+
 
 if __name__ == "__main__":
     load_dotenv()

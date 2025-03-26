@@ -1,9 +1,11 @@
-from seleniumbase import Driver
 import random
 import threading
 import time
-from logger import log
+
+from seleniumbase import Driver
+
 from discordbot.main import sendBotChannel
+from logger import log
 
 random_visits = [
     "https://www.google.com",
@@ -14,6 +16,7 @@ random_visits = [
     "https://www.linkedin.com",
     "https://www.github.com",
 ]
+
 
 class PokemonCenter:
     def __init__(self, db):
@@ -36,8 +39,13 @@ class PokemonCenter:
             while True:
                 seconds = 5 * 60
                 last_detected_queue_time = self.db.get("last_detected_queue_time")
-                if last_detected_queue_time and time.time() - last_detected_queue_time < seconds:
-                    log.info(f"Last queue time was less than {seconds} seconds ago. Skipping...")
+                if (
+                    last_detected_queue_time
+                    and time.time() - last_detected_queue_time < seconds
+                ):
+                    log.info(
+                        f"Last queue time was less than {seconds} seconds ago. Skipping..."
+                    )
                     time.sleep(60)
                     continue
 
@@ -51,7 +59,7 @@ class PokemonCenter:
                     queue_selectors = [
                         "h1.waiting-text",
                         "//*[contains(text(), 'You are currently in line')]",
-                        "//*[contains(text(), 'queue-it')]"
+                        "//*[contains(text(), 'queue-it')]",
                     ]
 
                     # First check the main page for queue indicators
@@ -59,14 +67,23 @@ class PokemonCenter:
                         try:
                             # Handle both CSS and XPath selectors
                             if selector.startswith("//"):
-                                exists = self.driver.is_element_visible(selector, by="xpath", timeout=3)
+                                exists = self.driver.is_element_visible(
+                                    selector, by="xpath", timeout=3
+                                )
                             else:
-                                exists = self.driver.is_element_visible(selector, timeout=3)
+                                exists = self.driver.is_element_visible(
+                                    selector, timeout=3
+                                )
 
                             if exists:
                                 log.info("[🔔] Queue detected! Drop likely happening.")
-                                log.info(f"Found queue element with selector: {selector}")
-                                sendBotChannel(f"🔔 Queue detected! Drop likely happening at https://www.pokemoncenter.com", user="jeemong")
+                                log.info(
+                                    f"Found queue element with selector: {selector}"
+                                )
+                                sendBotChannel(
+                                    f"🔔 Queue detected! Drop likely happening at https://www.pokemoncenter.com",
+                                    user="jeemong",
+                                )
                                 self.db.set("last_detected_queue_time", time.time())
                                 found_queue = True
                                 break
@@ -82,15 +99,28 @@ class PokemonCenter:
                                 for selector in queue_selectors:
                                     try:
                                         if selector.startswith("//"):
-                                            exists = self.driver.is_element_visible(selector, by="xpath", timeout=3)
+                                            exists = self.driver.is_element_visible(
+                                                selector, by="xpath", timeout=3
+                                            )
                                         else:
-                                            exists = self.driver.is_element_visible(selector, timeout=3)
+                                            exists = self.driver.is_element_visible(
+                                                selector, timeout=3
+                                            )
 
                                         if exists:
-                                            log.info("[🔔] Queue detected! Drop likely happening.")
-                                            log.info(f"Found queue element with selector: {selector} in iframe")
-                                            sendBotChannel(f"🔔 Queue detected! Drop likely happening at https://www.pokemoncenter.com", user="jeemong")
-                                            self.db.set("last_detected_queue_time", time.time())
+                                            log.info(
+                                                "[🔔] Queue detected! Drop likely happening."
+                                            )
+                                            log.info(
+                                                f"Found queue element with selector: {selector} in iframe"
+                                            )
+                                            sendBotChannel(
+                                                f"🔔 Queue detected! Drop likely happening at https://www.pokemoncenter.com",
+                                                user="jeemong",
+                                            )
+                                            self.db.set(
+                                                "last_detected_queue_time", time.time()
+                                            )
                                             found_queue = True
                                             break
                                     except:
