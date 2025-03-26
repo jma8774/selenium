@@ -43,20 +43,20 @@ class Main:
             self.running = False
             sys.exit(0)
 
-    # Main
-    # self.target.start_poll_for_stock()
-    # self.target.start_poll_for_new_product(15 * 60)
-    # self.pokemon_center.start_poll_for_queue() # Doesn't work that well... Anti-bot protection
-    # self.gamestop.start_poll_for_stock() # Doesn't work... cloudflare protection
-    self.popmart.check_for_have_a_seat()
-    self.evo.check_for_price_drop()
-    try:
-        while self.running:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        log.info("\nShutting down gracefully...")
-        self.running = False
-        sys.exit(0)
+        # Main
+        # self.target.start_poll_for_stock()
+        # self.target.start_poll_for_new_product(15 * 60)
+        # self.pokemon_center.start_poll_for_queue() # Doesn't work that well... Anti-bot protection
+        # self.gamestop.start_poll_for_stock() # Doesn't work... cloudflare protection
+        self.popmart.check_for_have_a_seat()
+        self.evo.check_for_price_drop()
+        try:
+            while self.running:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            log.info("\nShutting down gracefully...")
+            self.running = False
+            sys.exit(0)
 
 
 if __name__ == "__main__":
