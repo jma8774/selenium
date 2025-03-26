@@ -8,3 +8,6 @@ asyncio
 tinydb
 undetected-chromedriver
 setuptools
+selenium_stealth
+seleniumbase
+beautifulsoup4

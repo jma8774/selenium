@@ -1,6 +1,8 @@
-from tinydb import TinyDB, Query
 import json
 import os
+from datetime import datetime
+
+from tinydb import Query, TinyDB
 
 
 class Database:
@@ -74,17 +76,42 @@ class GameStopDB(Database):
     def __init__(self, db_path="data/gamestop.json"):
         super().__init__(db_path)
 
+class EvoDB(Database):
+    def __init__(self, db_path="data/evo.json"):
+        super().__init__(db_path)
+
+    def insert_or_update_product(self, product_id, product_name, product_url, prices):
+        # Get price history
+        price_history = self.get(product_id, {}).get("price_history", [])
+
+        # Add new price
+        price_history.append({
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "min": prices["min"],
+            "max": prices["max"]
+        })
+
+        data = {
+            "product_name": product_name,
+            "product_url": product_url,
+            "price_history": price_history
+        }
+
+        # Update product
+        self.set(product_id, data)
+        return data
 
 # Create a global instance
 common_db = None
 target_db = None
 pk_center_db = None
 gamestop_db = None
-
+evo_db = None
 
 def Init():
-    global common_db, target_db, pk_center_db, gamestop_db
+    global common_db, target_db, pk_center_db, gamestop_db, evo_db
     common_db = CommonDB(db_path="data/common.json")
     target_db = TargetDB(db_path="data/target.json")
     pk_center_db = PokemonCenterDB(db_path="data/pk_center.json")
     gamestop_db = GameStopDB(db_path="data/gamestop.json")
+    evo_db = EvoDB(db_path="data/evo.json")

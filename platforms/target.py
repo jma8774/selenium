@@ -1,57 +1,59 @@
 import random
 import threading
 import time
-from fake_useragent import UserAgent
-import requests
-from logger import log
-from discord.main import sendBotChannel
-from args import args
-from poller import Poller
-from helper import try_get_json_value
-from database.main import TargetDB
 from urllib.parse import urlencode
+
+import requests
+from fake_useragent import UserAgent
+
+from args import args
+from database.main import TargetDB
+from discord.main import sendBotChannel
+from helper import try_get_json_value
+from logger import log
+from poller import Poller
 
 
 class Target:
-    def __init__(self, target_db: TargetDB):
-        self.target_db = target_db
-        self.poller_data = [
-            {
-                "product_name": "Pokémon Trading Card Game: Scarlet & Violet—Prismatic Evolutions Elite Trainer Box",
-                "product_url": "https://www.target.com/p/2024-pok-scarlet-violet-s8-5-elite-trainer-box/-/A-93954435",
-                "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=93954435&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-93954435",
-            },
-            {
-                "product_name": "Pokémon Trading Card Game: Scarlet & Violet 151 Ultra-Premium Collection",
-                "product_url": "https://www.target.com/p/pokemon-trading-card-game-scarlet-38-violet-151-ultra-premium-collection/-/A-88897906#lnk=sametab",
-                "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=88897906&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-88897906",
-            },
-            {
-                "product_name": "Pokémon Trading Card Game: Scarlet & Violet 151 Elite Trainer Box",
-                "product_url": "https://www.target.com/p/pokemon-trading-card-game-scarlet-38-violet-151-elite-trainer-box/-/A-88897899#lnk=sametab",
-                "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=88897899&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-88897899",
-            },
-            {
-                "product_name": "Pokémon Trading Card Game: Scarlet & Violet S3.5 Booster Bundle Box",
-                "product_url": "https://www.target.com/p/tempo/-/A-88897904?nrtv_cid=wsavemyynqysm",
-                "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=88897904&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-88897904",
-            },
-            {
-                "product_name": "Pokémon Trading Card Game: Scarlet & Violet— Journey Together Elite Trainer Box",
-                "product_url": "https://www.target.com/p/2025-pok-233-mon-scarlet-violet-s9-elite-trainer-box/-/A-93803439#lnk=sametab",
-                "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=93803439&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3243&paid_membership=false&base_membership=false&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-93803439",
-            },
-            {
-                "product_name": "Pokémon Trading Card Game: Scarlet & Violet— Paldean Fates Elite Trainer Box",
-                "product_url": "https://www.target.com/p/pok-233-mon-trading-card-game-scarlet-38-violet-8212-paldean-fates-elite-trainer-box/-/A-89432659",
-                "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=89432659&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=0195BA32AFD70201B5038D6F2E99042B&channel=WEB&page=%2Fp%2FA-89432",
-            },
-            {
-                "product_name": "Pokémon Trading Card Game: Scarlet & Violet—Prismatic Evolutions Super-Premium Collection",
-                "product_url": "https://www.target.com/p/pok-233-mon-trading-card-game-scarlet-38-violet-8212-prismatic-evolutions-super-premium-collection/-/A-94300072",
-                "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=94300072&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=0195BA32AFD70201B5038D6F2E99042B&channel=WEB&page=%2Fp%2FA-94300072",
-            },
-        ]
+  def __init__(self, target_db: TargetDB):
+    self.target_db = target_db
+    self.poller_data = [
+      {
+        "product_name": "Pokémon Trading Card Game: Scarlet & Violet—Prismatic Evolutions Elite Trainer Box",
+        "product_url": "https://www.target.com/p/2024-pok-scarlet-violet-s8-5-elite-trainer-box/-/A-93954435",
+        "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=93954435&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-93954435",
+      },
+      {
+        "product_name": "Pokémon Trading Card Game: Scarlet & Violet 151 Ultra-Premium Collection",
+        "product_url": "https://www.target.com/p/pokemon-trading-card-game-scarlet-38-violet-151-ultra-premium-collection/-/A-88897906#lnk=sametab",
+        "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=88897906&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-88897906",
+      },
+      {
+        "product_name": "Pokémon Trading Card Game: Scarlet & Violet 151 Elite Trainer Box",
+        "product_url": "https://www.target.com/p/pokemon-trading-card-game-scarlet-38-violet-151-elite-trainer-box/-/A-88897899#lnk=sametab",
+        "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=88897899&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-88897899",
+      },
+      {
+        "product_name": "Pokémon Trading Card Game: Scarlet & Violet S3.5 Booster Bundle Box",
+        "product_url": "https://www.target.com/p/tempo/-/A-88897904?nrtv_cid=wsavemyynqysm",
+        "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=88897904&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-88897904",
+      },
+      {
+        "product_name": "Pokémon Trading Card Game: Scarlet & Violet— Journey Together Elite Trainer Box",
+        "product_url": "https://www.target.com/p/2025-pok-233-mon-scarlet-violet-s9-elite-trainer-box/-/A-93803439#lnk=sametab",
+        "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=93803439&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3243&paid_membership=false&base_membership=false&card_membership=false&required_store_id=3356&visitor_id=01954AAD38E1020192C9505DA3D40B51&channel=WEB&page=%2Fp%2FA-93803439",
+      },
+      {
+        "product_name": "Pokémon Trading Card Game: Scarlet & Violet— Paldean Fates Elite Trainer Box",
+        "product_url": "https://www.target.com/p/pok-233-mon-trading-card-game-scarlet-38-violet-8212-paldean-fates-elite-trainer-box/-/A-89432659",
+        "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=89432659&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=0195BA32AFD70201B5038D6F2E99042B&channel=WEB&page=%2Fp%2FA-89432",
+      }
+      # {
+      #   "product_name": "Pokémon Trading Card Game: Scarlet & Violet—Prismatic Evolutions Super-Premium Collection",
+      #   "product_url": "https://www.target.com/p/pok-233-mon-trading-card-game-scarlet-38-violet-8212-prismatic-evolutions-super-premium-collection/-/A-94300072",
+      #   "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=94300072&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=0195BA32AFD70201B5038D6F2E99042B&channel=WEB&page=%2Fp%2FA-94300072",
+      # }
+  ]
 
         if args.dev:
             self.poller_data.append(

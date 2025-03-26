@@ -1,24 +1,23 @@
-import requests
-import threading
-import sys
-import time
-from logger import log
-from discord.main import run_discord_bot, sendBotChannel
-import random
-from args import args
-from dotenv import load_dotenv
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait, Select
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
-import random
-import time
-from dotenv import load_dotenv
 import os
+import random
+import sys
+import threading
+import time
+
 import pygame
+import requests
+from dotenv import load_dotenv
+
+from args import args
+from discord.main import run_discord_bot, sendBotChannel
+from logger import log
+from selenium import webdriver
+from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 wait = None
 driver = None

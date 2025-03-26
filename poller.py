@@ -1,13 +1,16 @@
-import threading
-import requests
 import random
+import threading
 import time
 from typing import Callable, Optional
-from fake_useragent import UserAgent
+
 import pygame
-from logger import log
-from discord.main import sendBotChannel
+import requests
+from fake_useragent import UserAgent
+
 from args import args
+from discord.main import sendBotChannel
+from logger import log
+
 
 class Poller:
     def __init__(
@@ -20,7 +23,7 @@ class Poller:
         headers: Optional[dict] = None,
         proxies: Optional[dict] = None,
         on_in_stock: Optional[Callable[["Poller", requests.Response], None]] = None,
-        handle: Optional[Callable[[], bool]] = True
+        handle: Optional[Callable[[], bool]] = True,
     ):
         """
         :param url: URL to poll
@@ -40,7 +43,7 @@ class Poller:
         self.interval_range = interval_range
         self.headers = headers or {
             "User-Agent": self.ua.random,
-            "Accept": "application/json"
+            "Accept": "application/json",
             # "Referer": "https://example.com"
         }
         self.proxies = proxies
@@ -50,11 +53,12 @@ class Poller:
         self.pygame.mixer.init()
         self.pygame.mixer.music.load("assets/ping.mp3")
 
-
     def poll(self):
         log.info(f"🔍 Started polling for {self.product_name}")
         if not args.dev:
-            sendBotChannel(f"🔍 Started polling for {self.product_name}: {self.product_url}")
+            sendBotChannel(
+                f"🔍 Started polling for {self.product_name}: {self.product_url}"
+            )
             pass
         while True:
             try:
@@ -102,4 +106,3 @@ class Poller:
         thread.daemon = True
         thread.start()
         return thread
-

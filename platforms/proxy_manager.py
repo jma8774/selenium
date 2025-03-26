@@ -1,8 +1,10 @@
-import random
-import os
 import json
+import os
+import random
 from typing import Dict, List, Optional
+
 from dotenv import load_dotenv
+
 from logger import log
 
 

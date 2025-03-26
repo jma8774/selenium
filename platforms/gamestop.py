@@ -1,15 +1,17 @@
 import random
 import threading
 import time
-from fake_useragent import UserAgent
-import requests
-from logger import log
-from discord.main import sendBotChannel
-from args import args
-from poller import Poller
-from helper import try_get_json_value
-from database.main import TargetDB
 from urllib.parse import urlencode
+
+import requests
+from fake_useragent import UserAgent
+
+from args import args
+from database.main import TargetDB
+from discord.main import sendBotChannel
+from helper import try_get_json_value
+from logger import log
+from poller import Poller
 
 
 class GameStop:

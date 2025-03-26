@@ -1,10 +1,12 @@
-import discord as discord
-from discord.utils import get
-from dotenv import load_dotenv
-import os
-from logger import log
 import asyncio
+import os
+
+from dotenv import load_dotenv
+
+import discord as discord
 from args import args
+from discord.utils import get
+from logger import log
 
 discord_client = None
 discord_loop = None
