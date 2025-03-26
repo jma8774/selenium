@@ -1,0 +1,12 @@
+{
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+        "python.linting.enabled": true,
+        "python.linting.flake8Enabled": true,
+        "python.linting.isortEnabled": true
+    }
+}
