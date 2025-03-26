@@ -14,6 +14,7 @@ from platforms.pokemoncenter import PokemonCenter
 from platforms.gamestop import GameStop
 from platforms.popmart import PopMart
 from platforms.evo import Evo
+
 class Main:
   def __init__(self):
     load_dotenv()
