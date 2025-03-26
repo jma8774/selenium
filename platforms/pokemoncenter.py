@@ -1,9 +1,11 @@
-from seleniumbase import Driver
 import random
 import threading
 import time
-from logger import log
+
+from seleniumbase import Driver
+
 from discord.main import sendBotChannel
+from logger import log
 
 random_visits = [
     "https://www.google.com",
@@ -14,6 +16,7 @@ random_visits = [
     "https://www.linkedin.com",
     "https://www.github.com",
 ]
+
 
 class PokemonCenter:
     def __init__(self, db):
