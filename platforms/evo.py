@@ -111,19 +111,11 @@ class Evo:
                                 # )
                                 sendEmbed(
                                     "✅ Updated Price",
-                                    # product_name,
-                                    # price_history_string,
-                                    # f"https://www.evo.com{product_url}",
-                                    # product_img,
+                                    product_name,
+                                    price_history_string,
+                                    f"https://www.evo.com{product_url}",
+                                    product_img,
                                 )
-                            sendEmbed(
-                                "✅ Updated Price",
-                                # product_name,
-                                # price_history_string,
-                                # f"https://www.evo.com{product_url}",
-                                # product_img,
-                            )
-                            break
 
                         delay = 60 * 60
                         log.info(f"Waiting {delay:.2f} seconds before next check...")
