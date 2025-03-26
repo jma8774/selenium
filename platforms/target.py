@@ -4,7 +4,7 @@ import time
 from fake_useragent import UserAgent
 import requests
 from logger import log
-from discord.main import sendBotChannel
+from discordbot.main import sendBotChannel
 from args import args
 from poller import Poller
 from helper import try_get_json_value

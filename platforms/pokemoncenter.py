@@ -3,7 +3,7 @@ import random
 import threading
 import time
 from logger import log
-from discord.main import sendBotChannel
+from discordbot.main import sendBotChannel
 
 random_visits = [
     "https://www.google.com",

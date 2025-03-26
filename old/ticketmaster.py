@@ -3,7 +3,7 @@ import threading
 import sys
 import time
 from logger import log
-from discord.main import run_discord_bot, sendBotChannel
+from discordbot.main import run_discord_bot, sendBotChannel
 import random
 from args import args
 from dotenv import load_dotenv

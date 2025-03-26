@@ -6,7 +6,7 @@ from typing import Callable, Optional
 from fake_useragent import UserAgent
 import pygame
 from logger import log
-from discord.main import sendBotChannel
+from discordbot.main import sendBotChannel
 from args import args
 
 class Poller:

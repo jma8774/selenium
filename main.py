@@ -4,8 +4,7 @@ import threading
 import sys
 import time
 from logger import log
-from discord.main import run_discord_bot, sendBotChannel
-from selenium_flows import handle_target
+from discordbot.main import run_discord_bot, sendBotChannel
 from args import args
 from dotenv import load_dotenv
 import database.main
@@ -14,6 +13,7 @@ from platforms.pokemoncenter import PokemonCenter
 from platforms.gamestop import GameStop
 from platforms.popmart import PopMart
 from platforms.evo import Evo
+from platforms.brainyquote import BrainyQuote
 
 class Main:
   def __init__(self):
@@ -25,6 +25,7 @@ class Main:
     self.gamestop = GameStop(database.main.gamestop_db)
     self.popmart = PopMart()
     self.evo = Evo(database.main.evo_db)
+    self.brainy_quote = BrainyQuote(database.main.common_db)
 
   def start(self):
     # Discord bot
@@ -38,6 +39,7 @@ class Main:
     # self.gamestop.start_poll_for_stock() # Doesn't work... cloudflare protection
     self.popmart.check_for_have_a_seat()
     self.evo.check_for_price_drop()
+    self.brainy_quote.check_for_daily_quote()
     try:
       while self.running:
         time.sleep(1)
