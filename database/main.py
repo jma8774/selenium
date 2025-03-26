@@ -1,7 +1,9 @@
-from datetime import datetime
-from tinydb import TinyDB, Query
 import json
 import os
+from datetime import datetime
+
+from tinydb import Query, TinyDB
+
 
 class Database:
     def __init__(self, db_path="data/db.json"):
@@ -23,7 +25,7 @@ class Database:
             value = json.dumps(value)
 
         # Update or insert the value
-        self.db.upsert({'key': key, 'value': value}, self.query.key == key)
+        self.db.upsert({"key": key, "value": value}, self.query.key == key)
 
     def set_if_not_exists(self, key, value):
         """Store a value with a key if it doesn't exist"""
@@ -36,10 +38,10 @@ class Database:
         if result:
             try:
                 # Try to parse as JSON if it's a JSON string
-                return json.loads(result['value'])
+                return json.loads(result["value"])
             except:
                 # Return as string if not JSON
-                return result['value']
+                return result["value"]
         return default
 
     def delete(self, key):
@@ -54,21 +56,26 @@ class Database:
         """Clear all data"""
         self.db.truncate()
 
+
 class CommonDB(Database):
     def __init__(self, db_path="data/common.json"):
         super().__init__(db_path)
+
 
 class TargetDB(Database):
     def __init__(self, db_path="data/target.json"):
         super().__init__(db_path)
 
+
 class PokemonCenterDB(Database):
     def __init__(self, db_path="data/pk_center.json"):
         super().__init__(db_path)
 
+
 class GameStopDB(Database):
     def __init__(self, db_path="data/gamestop.json"):
         super().__init__(db_path)
+
 
 class EvoDB(Database):
     def __init__(self, db_path="data/evo.json"):
@@ -79,21 +86,24 @@ class EvoDB(Database):
         price_history = self.get(product_id, {}).get("price_history", [])
 
         # Add new price
-        price_history.append({
-            "date": datetime.now().strftime("%Y-%m-%d"),
-            "min": prices["min"],
-            "max": prices["max"]
-        })
+        price_history.append(
+            {
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "min": prices["min"],
+                "max": prices["max"],
+            }
+        )
 
         data = {
             "product_name": product_name,
             "product_url": product_url,
-            "price_history": price_history
+            "price_history": price_history,
         }
 
         # Update product
         self.set(product_id, data)
         return data
+
 
 # Create a global instance
 common_db = None
@@ -101,6 +111,7 @@ target_db = None
 pk_center_db = None
 gamestop_db = None
 evo_db = None
+
 
 def Init():
     global common_db, target_db, pk_center_db, gamestop_db, evo_db
