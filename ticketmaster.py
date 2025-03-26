@@ -19,8 +19,10 @@ import time
 from dotenv import load_dotenv
 import os
 import pygame
+
 wait = None
 driver = None
+
 
 def click_join_queue_button(time_to_wait=60 * 60):
     global driver, wait
@@ -32,14 +34,15 @@ def click_join_queue_button(time_to_wait=60 * 60):
         try:
             current_time = time.time()
             elapsed_time = current_time - start_time
-            log.info(f"Attempting to find button... (Elapsed time: {elapsed_time:.1f}s)")
+            log.info(
+                f"Attempting to find button... (Elapsed time: {elapsed_time:.1f}s)"
+            )
 
             # Wait for the span with text "Join the Queue" to be present and clickable
             join_button = wait.until(
-                EC.presence_of_element_located((
-                    By.XPATH,
-                    "//span[text()='Join the Queue']"
-                ))
+                EC.presence_of_element_located(
+                    (By.XPATH, "//span[text()='Join the Queue']")
+                )
             )
 
             if not join_button.is_enabled():
@@ -70,6 +73,7 @@ def click_join_queue_button(time_to_wait=60 * 60):
 
         time.sleep(0.1)
 
+
 def handle_ticketmaster(url):
     global wait, driver
     user_data_dir = os.getenv("USER_DATA_DIR")
@@ -96,6 +100,7 @@ def handle_ticketmaster(url):
     except Exception as e:
         log.info(f"An error occurred: {str(e)}")
 
+
 def main():
     pygame.mixer.init()
     pygame.mixer.music.load("assets/ping.mp3")
@@ -106,6 +111,7 @@ def main():
 
     # Handle the target URL
     handle_ticketmaster(url)
+
 
 if __name__ == "__main__":
     load_dotenv()
