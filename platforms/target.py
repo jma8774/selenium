@@ -44,12 +44,12 @@ class Target:
         "product_name": "Pokémon Trading Card Game: Scarlet & Violet— Paldean Fates Elite Trainer Box",
         "product_url": "https://www.target.com/p/pok-233-mon-trading-card-game-scarlet-38-violet-8212-paldean-fates-elite-trainer-box/-/A-89432659",
         "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=89432659&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=0195BA32AFD70201B5038D6F2E99042B&channel=WEB&page=%2Fp%2FA-89432",
-      },
-      {
-        "product_name": "Pokémon Trading Card Game: Scarlet & Violet—Prismatic Evolutions Super-Premium Collection",
-        "product_url": "https://www.target.com/p/pok-233-mon-trading-card-game-scarlet-38-violet-8212-prismatic-evolutions-super-premium-collection/-/A-94300072",
-        "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=94300072&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=0195BA32AFD70201B5038D6F2E99042B&channel=WEB&page=%2Fp%2FA-94300072",
       }
+      # {
+      #   "product_name": "Pokémon Trading Card Game: Scarlet & Violet—Prismatic Evolutions Super-Premium Collection",
+      #   "product_url": "https://www.target.com/p/pok-233-mon-trading-card-game-scarlet-38-violet-8212-prismatic-evolutions-super-premium-collection/-/A-94300072",
+      #   "poll_url": "https://redsky.target.com/redsky_aggregations/v1/web/product_fulfillment_v1?key=9f36aeafbe60771e321a7cc95a78140772ab3e96&is_bot=false&tcin=94300072&store_id=3356&zip=11223&state=NY&latitude=40.590296&longitude=-73.981104&scheduled_delivery_store_id=3356&paid_membership=false&base_membership=true&card_membership=false&required_store_id=3356&visitor_id=0195BA32AFD70201B5038D6F2E99042B&channel=WEB&page=%2Fp%2FA-94300072",
+      # }
   ]
 
     if args.dev:
