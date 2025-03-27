@@ -2,6 +2,12 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import os from 'os';
 import { fileURLToPath } from 'url'
+import { spawn } from 'child_process';
+import log from 'electron-log';
+
+// Configure electron-log
+log.transports.file.level = 'info';
+log.transports.console.level = 'info';
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -16,8 +22,8 @@ async function createWindow() {
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(currentDir, 'icons/icon.png'), // tray icon
-    width: 1000,
-    height: 600,
+    width: 1366,
+    height: 768,
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
@@ -44,10 +50,51 @@ async function createWindow() {
       mainWindow?.webContents.closeDevTools();
     });
   }
+  // Run Python script
+  // const pythonProcess = runPythonScript();
 
   mainWindow.on('closed', () => {
     mainWindow = undefined;
+    // pythonProcess?.kill();
   });
+
+}
+
+function runPythonScript() {
+  const pythonScriptPath = path.resolve(process.cwd(), '../backend/main.py');
+  log.info("Current directory:", process.cwd());
+  log.info("Python script path:", pythonScriptPath);
+
+  try {
+    const pythonProcess = spawn('python', [pythonScriptPath], {
+      stdio: 'pipe',
+      shell: false  // Don't need shell now
+    });
+
+    // Handle process events
+    pythonProcess.stdout.on('data', (data) => {
+      log.info('Python stdout:', data.toString());
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      log.warn('Python stderr:', data.toString());
+    });
+
+    pythonProcess.on('error', (error) => {
+      log.error('Failed to start Python process:', error);
+    });
+
+    pythonProcess.on('close', (code) => {
+      log.info(`Python process exited with code ${code}`);
+    });
+
+    return pythonProcess;
+
+  } catch (error) {
+    log.error('Error running Python script:', error);
+  }
+
+  return null;
 }
 
 void app.whenReady().then(createWindow);
