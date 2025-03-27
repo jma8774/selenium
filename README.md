@@ -8,6 +8,7 @@ python main.py
 
 # 💻 The Client (Frontend)
 
+Not connected to the backend via IPC yet
 
 ## 📦 Install the dependencies
 ```bash
