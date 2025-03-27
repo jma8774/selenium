@@ -1,34 +1,26 @@
-# 🐍 The Python Script (Backend)
-
-```
-cd backend
-python main.py
-```
-
-# 💻 The Client (Frontend)
+# The Client (Frontend)
 
 
-## 📦 Install the dependencies
+## Install the dependencies
 ```bash
-cd frontend
 npm install
 ```
 
-### 🚀 Start the app in development mode (hot-code reloading, error reporting, etc.)
+### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 quasar dev -m electron
 ```
 
 
-### 🏗️ Build the app for production
+### Build the app for production
 ```bash
 quasar build -m electron
 ```
 
-### ⚙️ Customize the configuration
+### Customize the configuration
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
 
-## 🤔 How does this work?
+## How does this work?
 
 > Same... I am learning along the way too
 
@@ -60,7 +52,7 @@ This project uses [Quasar Framework](https://quasar.dev) with [Vue 3](https://vu
 
 ---
 
-### 🎨 `/src` — Quasar + Vue Frontend
+### 🧩 `/src` — Quasar + Vue Frontend
 
 This is the main source folder for your frontend app.
 
