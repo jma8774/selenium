@@ -44,7 +44,6 @@ class Main:
 
         # Start Discord bot in its own thread with its own event loop
         self.discord_manager = DiscordManager()
-        time.sleep(3)
 
         # These might need fixing, but if too lazy, just call queue_task() on them
         # self.queue_task(self.pokemon_center.poll_for_queue())

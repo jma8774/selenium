@@ -33,7 +33,7 @@ class AMD:
             log.info("7600x3d last checked less than 1 day ago, skipping...")
             return
 
-        with SB(uc=True, headless=False) as sb:
+        with SB(uc=True, headless=True) as sb:
             sb.open("https://www.microcenter.com/site/content/bundle-and-save.aspx")
             source = sb.get_page_source().lower()
             if "7600x3d" in source:

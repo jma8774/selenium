@@ -35,7 +35,6 @@ class PopMart:
                 try:
                     # Get the minute in the hour
                     minute = datetime.now().minute
-                    log.info(f"Minute: {minute}")
                     if minute > 2 and minute < 58:
                         log.info(f"Not checking stock, they usually restock at XX:00")
                         time.sleep(15)
