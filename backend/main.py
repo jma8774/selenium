@@ -16,6 +16,7 @@ from platforms.gamestop import GameStop
 from platforms.pokemoncenter import PokemonCenter
 from platforms.popmart import PopMart
 from platforms.target import Target
+from platforms.bestbuy import BestBuy
 from poller import Poller
 
 
@@ -41,6 +42,7 @@ class Main:
         self.evo = Evo(database.main.evo_db)
         self.brainy_quote = BrainyQuote(database.main.common_db)
         self.amd = AMD(database.main.common_db)
+        self.bestbuy = BestBuy(database.main.common_db)
 
         # Start Discord bot in its own thread with its own event loop
         self.discord_manager = DiscordManager()
@@ -60,6 +62,7 @@ class Main:
         self.requeue_task_every(self.evo.check_for_price_drop, 60 * 60)
         self.requeue_task_every(self.amd.check_for_7600x3d, 60 * 60)
         self.requeue_task_every(self.brainy_quote.check_for_daily_quote, 60 * 60)
+        self.requeue_task_every(self.bestbuy.check_for_airpods, 60 * 60)
 
     """
     This function will queue a task to be run in a separate thread.

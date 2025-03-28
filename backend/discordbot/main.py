@@ -59,6 +59,7 @@ class MyBot(discord.Client):
             "ricky": 600922329815449632,
             "justin": 152956804270129152,
             "jeemong": 152957206025863168,
+            "butter": 1047615361886982235,
         }
         roles = {
             "chodes": 437677551926771732,
@@ -105,7 +106,7 @@ class MyBot(discord.Client):
 
         # Create an embed object
         embed = discord.Embed(
-            title=f"{message} - {price}",
+            title=f"{message}\n{price}",
             description=f"[{name}]({url})",
             color=discord.Color.blue(),
         )

@@ -103,10 +103,13 @@ class Evo:
                         # sendBotChannel(
                         #     f"✅ Updated: https://www.evo.com{product_url}\n\n**Price History**\n{price_history_string}"
                         # )
+                        recent_price_history = "\n".join(
+                            price_history_string.split("\n")[-5:]
+                        )
                         sendEmbed(
-                            "✅ Updated Price",
+                            "✅ Price Change Found",
                             product_name,
-                            price_history_string,
+                            recent_price_history,
                             f"https://www.evo.com{product_url}",
                             product_img,
                         )
